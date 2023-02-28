@@ -1,1 +1,3 @@
 Extract  google-api-php-client-2.4.0.zip file and rename folder google-api-php-client-2.4.0 to google-api
+Import quiz.sql file to phpmyadmin
+Quiz.xlsx is just for database analysis and analysis.
