@@ -1,0 +1,60 @@
+<?php
+session_start();
+include 'db.php';
+include 'load_data.php';
+$serverdate = date('m/d/y');
+$today = date("Y-m-d", strtotime($serverdate));
+
+if(isset($_POST['save_question'])) {
+	$topic_id  = $_POST['topic_id'];
+	$level_id  = $_POST['level_id'];
+	$question  = mysqli_real_escape_string($con,$_POST['question']);
+	$option1  = mysqli_real_escape_string($con,$_POST['option1']);
+	$option2  = mysqli_real_escape_string($con,$_POST['option2']);
+	$option3  = mysqli_real_escape_string($con,$_POST['option3']);
+	$option4  = mysqli_real_escape_string($con,$_POST['option4']);
+	$answer  = $_POST['answer'];
+	if(mysqli_query($con,"INSERT INTO questionmaster (`topic_id`,`level_id`,`question`,`option1`,`option2`,`option3`,`option4`,`answer`) VALUES ('$topic_id','$level_id','$question','$option1','$option2','$option3','$option4','$answer')")){
+		$response['status']=true;
+		$response["message"]= "Record saved successfully";
+	} else{
+		$response['status']=false;
+		$response["message"]= "Failed to save record";
+	}
+	mysqli_close($con);
+	echo json_encode($response)	;
+}
+if(isset($_POST['question_table'])){
+	$i=0;
+	$questions=get_data("*","questionmaster INNER JOIN levelmaster on levelmaster.level_id=questionmaster.level_id INNER JOIN topicmaster on topicmaster.topic_id=questionmaster.topic_id");
+    $table='<table id="tbl_question" class="table table-stripped"  style="width:100%">
+            <thead>
+                <tr>
+                    <th>Sr No</th>
+                    <th>Topic</th>
+                    <th>Level</th>
+                    <th>Question</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>';
+    if(isset($questions)){
+		while($row=mysqli_fetch_array($questions)){
+			$i++;
+			$table=$table.'<tr>
+			<td>'.$i.'</td>
+			<td>'.$row['topic_name'].'</td>
+			<td>'.$row['level_name'].'</td>
+			<td>'.$row['question'].'</td>
+			<td><a class="w3-text-red" onclick="delete_question(' . $row['question_id'] . ')"><i class="fa fa-trash" style="cursor: pointer;" title="Delete topic"></i></a></td>
+			</tr>';
+		}
+		$table=$table.'</tbody></table>';
+	}
+	echo $table; 
+}
+
+if(isset($_POST['delete_question'])){
+	echo mysqli_query($con,"DELETE FROM questionmaster where question_id='".$_POST['question_id']."'");
+}
+?>

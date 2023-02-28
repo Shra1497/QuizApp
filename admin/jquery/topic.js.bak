@@ -1,0 +1,111 @@
+$(document).ready(function() {
+	topic_table();
+});
+
+function saveData(){
+	debugger
+	var topic_id = $('#topic_id').val();
+	var topic_name = $('#topic_name').val();
+	var marks_per_question = Number($('#marks_per_question').val());
+	$.ajax
+    ({
+		type: 'post',
+		url: 'dal/dal_topic.php',
+		data: {
+			save_topic: 'save_topic',
+			topic_id: topic_id,
+			topic_name: topic_name,
+			marks_per_question:marks_per_question
+		}, success: function (response) {
+			debugger
+			$('#errorDiv').show();
+			var result = JSON.parse(response)
+			if(result.status){
+				topic_table()
+				$('#topic_form').trigger("reset");
+				$("#errorDiv").removeClass('alert-danger');
+				$("#errorDiv").addClass('alert-success');
+				$("#errorDiv").text(result.message);
+			}else{
+				$("#errorDiv").removeClass('alert-success');
+				$("#errorDiv").addClass('alert-danger');
+				$("#errorDiv").text(result.message);
+			}
+        }
+    });
+}
+function topic_table(){
+	$.ajax
+	({
+		type:'post',
+		url:'dal/dal_topic.php',
+		data:{
+			topic_table:'topic_table',
+		},
+		success:function(response) {
+			document.getElementById("filldata").innerHTML="";
+			$("#filldata").append(response);
+		}
+	});
+	$(document).ajaxStart(function () {
+		$("#imgLoading").show();
+	}).ajaxStop(function (){
+		$("#imgLoading").hide();
+		$('#tbl_topic').DataTable({
+			destroy: true,
+			"paging": true,
+		});
+	});
+}
+
+function delete_topic(topic_id){
+	swal({
+	  title: "Are you sure you want to delete this topic",
+	  type: "warning",
+	  showCancelButton: true,
+	  confirmButtonClass: "btn-danger",
+	  cancelButtonClass: "btn-warning",
+	  confirmButtonText: "Yes, delete it!",
+	  cancelButtonText: "No, cancel!",
+	  closeOnConfirm: false,
+	  closeOnCancel: false
+	},
+	function(isConfirm) {
+		if (isConfirm) {
+			$.ajax
+			({
+				type: 'post',
+				url: 'dal/dal_topic.php',
+				data: {
+					delete_topic: 'delete_topic',
+					topic_id: topic_id,
+				},
+				success: function (response) {
+					if(response){
+						topic_table();
+						swal("Deleted!", "Topic has been deleted", "success");
+					} else {
+						swal("Not Deleted!", "Failed to delete topic", "error");
+					}
+				}
+			});
+		}else{
+			 swal("Cancelled", "Topic is safe :)", "error");
+		}
+	});	
+}
+
+function edit_topic(topic_id,topic_name,marks_per_question){
+	debugger
+	$("#imgLoading").show();
+	$('#topic_id').val(topic_id);
+	$('#topic_name').val(topic_name);
+	$('#marks_per_question').val(marks_per_question);
+	$("#imgLoading").hide();
+}
+
+function clearData(){
+	$("#imgLoading").show();
+	$('#topic_form').trigger("reset");
+	$("#imgLoading").hide();
+}

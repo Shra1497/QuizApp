@@ -1,0 +1,71 @@
+<?php
+session_start();
+include 'db.php';
+include 'load_data.php';
+$serverdate = date('m/d/y');
+$today = date("Y-m-d", strtotime($serverdate));
+
+if(isset($_POST['save_topic'])) {
+	$topic_id  = $_POST['topic_id'];
+	$topic_name  = $_POST['topic_name'];
+	$marks_per_question  = $_POST['marks_per_question'];
+	$checkExists = "SELECT * FROM topicmaster WHERE topic_name = '$topic_name' and topic_id!='$topic_id'";
+	$result = mysqli_query($con,$checkExists);
+	if (isset($result) && mysqli_num_rows($result) > 0) {
+		$response['status']=false;
+		$response["message"]= "Topic already exists..Please enter another";
+	}else{
+		if($topic_id!=''){
+			$query = mysqli_query($con,"UPDATE topicmaster SET `topic_name`='$topic_name',`marks_per_question`=$marks_per_question WHERE topic_id='$topic_id'");
+			$msg="Record updated successfully";
+			$msg1="Failed to update record";
+		}else{
+			$query = mysqli_query($con,"INSERT INTO topicmaster (`topic_name`,`marks_per_question`) VALUES ('$topic_name','$marks_per_question')");
+			$msg="Record saved successfully";
+			$msg1="Failed to save record";
+		}
+		if($query){
+			$response['status']=true;
+			$response["message"]= $msg;
+		} else{
+			$response['status']=false;
+			$response["message"]= $msg1;
+		}
+	}
+	mysqli_close($con);
+	echo json_encode($response)	;
+}
+if(isset($_POST['topic_table'])){
+	$i=0;
+	$topics=get_data("*","topicmaster");
+    $table='<table id="tbl_topic" class="table table-stripped"  style="width:100%">
+            <thead>
+                <tr>
+                    <th>Sr No</th>
+                    <th>Topic Name</th>
+                    <th>Marks / Question</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>';
+    if(isset($topics)){
+		while($row=mysqli_fetch_array($topics)){
+			$i++;
+			$topic_name= "'". $row['topic_name'] ."'";
+			$table=$table.'<tr>
+			<td>'.$i.'</td>
+			<td>'.$row['topic_name'].'</td>
+			<td>'.$row['marks_per_question'].'</td>
+			<td><a class="w3-text-green w3-margin-right" onclick="edit_topic(' . $row['topic_id'] . ','.$topic_name.',' . $row['marks_per_question'] . ')"><i class="fa fa-pencil" style="cursor: pointer;" title="Edit topic"></i></a>
+			<a class="w3-text-red" onclick="delete_topic(' . $row['topic_id'] . ')"><i class="fa fa-trash" style="cursor: pointer;" title="Delete topic"></i></a></td>
+			</tr>';
+		}
+		$table=$table.'</tbody></table>';
+	}
+	echo $table; 
+}
+
+if(isset($_POST['delete_topic'])){
+	echo mysqli_query($con,"DELETE FROM topicmaster where topic_id='".$_POST['topic_id']."'");
+}
+?>

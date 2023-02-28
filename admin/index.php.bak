@@ -1,0 +1,101 @@
+<?php
+   session_start();
+?>
+<!doctype html>
+<html>
+   <head>
+      <title>Quiz | Admin Login</title>
+	  <link rel="shortcut icon" href="images/favicon.png">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+      <link rel="stylesheet" href="css/login_form.css">
+	  <script type="text/javascript" src="../assets/front-css/js/jquery.min.js"></script> 
+	  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> 
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+      <style>
+         #gif {
+			 position: absolute;
+			 top: 50%;
+			 left: 50%;
+			 margin: -50px 0px 0px -50px;
+         }
+        
+      </style>
+	  
+      <script type="text/javascript">
+	 
+         $(document).ready(function(){
+         		$(document).ajaxStart(function () {
+         			$("#imgLoading").show();
+         		}).ajaxStop(function () {
+         			$("#imgLoading").hide();
+         		});         		
+         	});
+         function login(){
+         		var user_name=$('#user_name').val();
+         		var password=$('#password').val();
+				if(user_name ==""){
+         			alert("Please provide username");
+         			document.getElementById("user_name").focus();
+         			return;
+         		}
+         		if(password ==""){
+         			alert("Please provide password");
+         			document.getElementById("password").focus();
+         			return;
+         		}
+         		$.ajax
+         		({
+         			type:'post',
+         			url:'dal/dal_login.php',
+         			data:{
+         				login:'login',
+         				user_name:user_name,
+         				password:password,
+         			},
+         			success:function(response){
+         				var result = JSON.parse(response)
+						if(result.status){
+         					$("#errorDiv").removeClass('alert-danger');
+							$("#errorDiv").addClass('alert-success');
+							$("#errorDiv").text(result.message);
+							location.href="./topic";
+         				}else{
+         					$("#errorDiv").removeClass('alert-success');
+							$("#errorDiv").addClass('alert-danger');
+							$("#errorDiv").text(result.message);
+							$('#login-form').trigger("reset");							
+         				}		
+         			}	
+         		})	
+         	}	
+      </script>
+   </head>
+   <body>
+      <?php 
+         session_unset(); 
+         session_destroy();
+         require_once 'dal/load_data.php';
+		 ?>
+      <div id='imgLoading' class="w3-overlay w3-text-aqua"><i id="gif" class="fa fa-spinner w3-spin" style="font-size:64px"></i></div>
+      <main id="main-holder">
+		<div class="alert" id="errorDiv" role="alert"></div>
+         <form id="login-form">
+            <h5>Admin Login</h5>
+			<div class="row">
+				<div class="col-md-12">
+					<input type="text" name="username" id="user_name" class="w3-input w3-border w3-round w3-margin-top form-control" required placeholder="username" autofocus>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<input type="password" name="password" id="password" class="w3-input w3-border w3-round w3-margin-top form-control" required placeholder="password">
+				</div>
+			</div>
+			<div class="row">
+				<button type="button" class="w3-button  w3-border w3-round-xlarge  w3-margin-top" onclick="login()" style="background-color:#fbf045">Log in <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
+			</div>
+         </form>
+      </main>
+   </body>
+</html>

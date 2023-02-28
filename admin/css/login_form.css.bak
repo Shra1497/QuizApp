@@ -1,0 +1,68 @@
+html{
+	height:100%;
+	}
+img {
+  border-radius: 50%;
+}
+body{
+	height:50%;
+	width:40%;
+	margin:0 auto;
+	padding:5%;
+	background: url(./image/book.png) ;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+	}
+#main-holder{
+	margin:-10% 0% 0%;
+	padding:10%;
+	border-radius:7ps;
+	background: rgba( 255, 255, 255, 0.30 );
+	box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+	backdrop-filter: blur( 3.5px );
+	-webkit-backdrop-filter: blur( 3.5px );
+	border-radius: 10px;
+	border: 1px solid rgba( 255, 255, 255, 0.18 );
+
+}
+#login-form{
+	margin:-10% 7% 7%;
+	padding:1%;
+	text-align:center;
+}
+.login-form-field::placeholder{
+	color:#3a3a3a;
+}
+.login-form-field{
+	border:none;
+	border-bottom:1px solid #3a3a3a;
+	margin-bottom:10px;
+	margin-right:10px;
+	bottom-radius:3px;
+	padding:0px 0px 5px 5px;
+	
+}
+#login-form-submit{
+	width:40%;
+	padding:5px;
+	border-radius:5px;
+	color:white;
+	background-color:#3a3a3a;
+}
+
+@media screen and (max-width: 768px) {
+  
+
+  body {
+    /* background-color: white; */
+	width:90%;
+	   }
+	   #main-holder{
+		margin:20% 0% 0%;
+		padding:15% 0%;
+}
+}
+
+
