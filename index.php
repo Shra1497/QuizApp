@@ -1,7 +1,7 @@
 <?php
 session_start();
 if(isset($_SESSION['login_id'])){
-    header('Location: login.php');
+    header('Location: index.php');
     exit;
 }
 require 'google-api/vendor/autoload.php';
@@ -11,7 +11,7 @@ $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIF
 $client->setHttpClient($guzzleClient);
 $client->setClientId('410048790725-o6lvgluqc39se3lcfk2qrrgu1bbdb6ju.apps.googleusercontent.com');
 $client->setClientSecret('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');
-$client->setRedirectUri('http://localhost:8080/quizapp/login.php');
+$client->setRedirectUri('http://localhost:8080/quizapp/index.php');
 $client->addScope("email");
 $client->addScope("profile");
 if(isset($_GET['code'])){
@@ -25,7 +25,7 @@ if(isset($_GET['code'])){
         $_SESSION['email'] = $google_account_info->email;
 		header('Location: welcome.php');
     }else{
-        header('Location: login.php');
+        header('Location: index.php');
         exit;
     }
 }else{ 
